@@ -21,6 +21,7 @@ import { LiveGauges } from './LiveGauges';
 import { ColdChainLogger } from './ColdChainLogger';
 import { CorridorMapCanvas } from './CorridorMapCanvas';
 import { DtcAlertPanel } from './DtcAlertPanel';
+import { SuiteDock } from './SuiteDock';
 
 export function App() {
   const [fleet, setFleet] = useState<TelematicsVehicleSnapshot[]>(INITIAL_FLEET_VEHICLES);
@@ -78,6 +79,7 @@ export function App() {
 
   return (
     <div className="telematics-app-root">
+      <SuiteDock currentProductId="product-05-fleet-telematics" />
       {/* Platform Cross-Project Navigation Header */}
       <CrossProjectNav />
 
