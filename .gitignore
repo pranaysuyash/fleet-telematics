@@ -27,6 +27,7 @@ lerna-debug.log*
 .env.test.local
 .env.production.local
 *.env
+!.env.example
 
 # Operating System & Editor
 .DS_Store
@@ -45,7 +46,10 @@ Thumbs.db
 # Testing & Coverage
 coverage/
 test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
 
-# Cloudflare / Deploy
+# Cloudflare / Agent / Deploy
 .wrangler/
 .agent/

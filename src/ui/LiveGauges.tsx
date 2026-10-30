@@ -1,4 +1,5 @@
 import React from 'react';
+import { IconZap } from './icons';
 import { J1939EngineTelemetry } from '../engine/types';
 
 interface LiveGaugesProps {
@@ -23,7 +24,7 @@ export const LiveGauges: React.FC<LiveGaugesProps> = ({ engine, operationalStatu
   return (
     <div className="telematics-card gauges-card">
       <div className="card-header">
-        <h3>⚡ SAE J1939 CAN Bus Engine Telemetry</h3>
+        <h3><span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><IconZap size={16} /> SAE J1939 CAN Bus Engine Telemetry</span></h3>
         <span className={`status-pill ${operationalStatus}`}>
           {operationalStatus.replace('_', ' ').toUpperCase()}
         </span>

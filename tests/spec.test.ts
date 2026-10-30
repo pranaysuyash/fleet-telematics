@@ -61,6 +61,24 @@ describe('Product 05 — Telematics & J1939 Engine Architecture', () => {
     expect(['caution', 'critical']).toContain(hotReefer.coldChain.excursionAlert);
   });
 
+  it('detects cold chain thermal intrusion and triggers excursion alert even when vehicle is IDLE (FT-02)', () => {
+    const reefer = JSON.parse(JSON.stringify(INITIAL_FLEET_VEHICLES[0]));
+    reefer.operationalStatus = 'idle';
+    reefer.engine.roadSpeedMph = 0;
+    expect(reefer.coldChain.isEquipped).toBe(true);
+
+    const doorOpenReefer = toggleReeferDoor(reefer);
+    expect(doorOpenReefer.coldChain.doorOpenState).toBe(true);
+
+    // Simulate 60 seconds parked at loading dock with doors open
+    const hotIdleReefer = stepTelematicsSimulation(doorOpenReefer, { deltaSeconds: 60 });
+    expect(hotIdleReefer.operationalStatus).toBe('idle');
+    expect(hotIdleReefer.engine.roadSpeedMph).toBe(0);
+    expect(hotIdleReefer.coldChain.zone1CurrentTempF).toBeGreaterThan(reefer.coldChain.zone1CurrentTempF);
+    expect(['caution', 'critical']).toContain(hotIdleReefer.coldChain.excursionAlert);
+    expect(hotIdleReefer.safety.excessIdleMinutes).toBeGreaterThan(0);
+  });
+
   it('injects harsh braking event and decrements driver safety score', () => {
     const truck = INITIAL_FLEET_VEHICLES[0];
     const initialHarshBrakes = truck.safety.harshBrakeCount;

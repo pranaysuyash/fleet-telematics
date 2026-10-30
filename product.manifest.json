@@ -6,25 +6,58 @@
   "code": "P05",
   "version": "1.0.0",
   "port": 5177,
-  "icon": "📡",
+  "icon": "\ud83d\udce1",
   "description": "SAE J1939 CAN bus OBD-II telemetry, cold-chain reefer thermal logging, GPS interstate corridor waypoints, and DTC safety diagnostics",
   "category": "telematics",
   "entitlementKey": "fleet_telematics",
   "routes": {
     "dev": "http://localhost:5177",
-    "cloud": "https://trucking-fleet-telematics.pages.dev"
+    "cloud": "https://fleettelematics.pages.dev"
   },
   "bridges": {
     "consumes": [
-      { "from": "product-01-cargo-fit", "protocol": "OLLP-v1", "action": "ingest_manifest_weights" },
-      { "from": "product-03-hos-planner", "protocol": "HOS-v1", "action": "sync_driver_duty_clock" },
-      { "from": "product-04-asset-studio", "protocol": "OLAS-v1", "action": "link_digital_twin" }
+      {
+        "from": "product-01-cargo-fit",
+        "protocol": "OLLP-v1",
+        "action": "ingest_manifest_weights"
+      },
+      {
+        "from": "product-03-hos-planner",
+        "protocol": "HOS-v1",
+        "action": "sync_driver_duty_clock"
+      },
+      {
+        "from": "product-04-asset-studio",
+        "protocol": "OLAS-v1",
+        "action": "link_digital_twin"
+      }
     ],
     "produces": [
-      { "to": "product-01-cargo-fit", "protocol": "TELEMATICS-v1", "action": "verify_axle_load" },
-      { "to": "product-02-freight-pricing", "protocol": "TELEMATICS-v1", "action": "feed_actual_mpg" },
-      { "to": "product-03-hos-planner", "protocol": "TELEMATICS-v1", "action": "feed_live_motion" },
-      { "to": "product-04-asset-studio", "protocol": "TELEMATICS-v1", "action": "link_twin_telemetry" }
+      {
+        "to": "product-01-cargo-fit",
+        "protocol": "TELEMATICS-v1",
+        "action": "verify_axle_load"
+      },
+      {
+        "to": "product-02-freight-pricing",
+        "protocol": "TELEMATICS-v1",
+        "action": "feed_actual_mpg"
+      },
+      {
+        "to": "product-03-hos-planner",
+        "protocol": "TELEMATICS-v1",
+        "action": "feed_live_motion"
+      },
+      {
+        "to": "product-04-asset-studio",
+        "protocol": "TELEMATICS-v1",
+        "action": "link_twin_telemetry"
+      }
     ]
+  },
+  "pricingTier": {
+    "tierName": "CAN-Bus Telematics Mesh",
+    "monthlyPriceUsd": 299,
+    "description": "SAE J1939 CAN bus OBD-II telemetry, cold-chain reefer thermal logging, GPS interstate corridor waypoints, and DTC safety diagnostics"
   }
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { IconAlertCircle, IconCheck } from './icons';
 import { DiagnosticTroubleCode, SafetyTelematicsEvents } from '../engine/types';
 
 interface DtcAlertPanelProps {
@@ -46,7 +47,7 @@ export const DtcAlertPanel: React.FC<DtcAlertPanelProps> = ({
     <div className="telematics-card dtc-card">
       <div className="card-header">
         <div className="header-with-icon">
-          <h3>🚨 Active J1939 DTC Diagnostics & Safety Telematics</h3>
+          <h3><span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><IconAlertCircle size={16} /> Active J1939 DTC Diagnostics & Safety Telematics</span></h3>
           <span className={`badge-dtc-count ${codes.length > 0 ? 'active' : 'clean'}`}>
             {codes.length} Active DTCs
           </span>
@@ -88,21 +89,25 @@ export const DtcAlertPanel: React.FC<DtcAlertPanelProps> = ({
       </div>
 
       {/* DTC List */}
-      <div className="dtc-table-container">
+      <div className="dtc-table-container" aria-live="polite" role="region" aria-label="Active J1939 Diagnostic Trouble Codes">
         {codes.length === 0 ? (
           <div className="clean-dtc-message">
-            ✅ No active SAE J1939 Diagnostic Trouble Codes. Engine & powertrain sensors operating within standard OEM nominal tolerances.
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <IconCheck size={14} style={{ color: '#10b981' }} />
+              No active SAE J1939 Diagnostic Trouble Codes. Engine & powertrain sensors operating within standard OEM nominal tolerances.
+            </span>
           </div>
         ) : (
           <table className="dtc-table">
+            <caption className="sr-only" style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', border: 0 }}>Active Diagnostic Trouble Codes</caption>
             <thead>
               <tr>
-                <th>Severity</th>
-                <th>SPN</th>
-                <th>FMI</th>
-                <th>Fault Description</th>
-                <th>ECU Source</th>
-                <th>Logged At</th>
+                <th scope="col">Severity</th>
+                <th scope="col">SPN</th>
+                <th scope="col">FMI</th>
+                <th scope="col">Fault Description</th>
+                <th scope="col">ECU Source</th>
+                <th scope="col">Logged At</th>
               </tr>
             </thead>
             <tbody>
@@ -139,7 +144,7 @@ export const DtcAlertPanel: React.FC<DtcAlertPanelProps> = ({
         </button>
         {codes.length > 0 && (
           <button className="btn-action-clear" onClick={onClearCodes}>
-            🧹 Clear All Active DTCs
+            Clear All Active DTCs
           </button>
         )}
       </div>

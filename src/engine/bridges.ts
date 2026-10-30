@@ -5,7 +5,16 @@
 
 import { TelematicsVehicleSnapshot } from './types';
 
+function getProductBaseUrl(port: number, cloudUrl: string): string {
+  if (typeof window !== 'undefined') {
+    const isCloud = window.location.hostname.includes('pages.dev') || window.location.hostname.includes('trucking.io');
+    if (isCloud) return cloudUrl;
+  }
+  return `http://localhost:${port}`;
+}
+
 export function buildCargoFitTelematicsBridgeUrl(vehicle: TelematicsVehicleSnapshot): string {
+  const base = getProductBaseUrl(5173, 'https://cargofit.pages.dev');
   const params = new URLSearchParams({
     source: 'product-05-telematics',
     unitNumber: vehicle.vehicleUnitNumber,
@@ -13,10 +22,11 @@ export function buildCargoFitTelematicsBridgeUrl(vehicle: TelematicsVehicleSnaps
     odometer: String(Math.round(vehicle.engine.odometerMiles)),
     vin: vehicle.vin,
   });
-  return `http://localhost:5173/?${params.toString()}`;
+  return `${base}/?${params.toString()}`;
 }
 
 export function buildFreightPricingTelematicsBridgeUrl(vehicle: TelematicsVehicleSnapshot): string {
+  const base = getProductBaseUrl(5174, 'https://freightpricing.pages.dev');
   const params = new URLSearchParams({
     source: 'product-05-telematics',
     actualMpg: String(vehicle.engine.averageMpg),
@@ -24,10 +34,11 @@ export function buildFreightPricingTelematicsBridgeUrl(vehicle: TelematicsVehicl
     fuelRemainingPct: String(Math.round(vehicle.engine.fuelLevelPct)),
     corridor: vehicle.gps.currentCorridor,
   });
-  return `http://localhost:5174/?${params.toString()}`;
+  return `${base}/?${params.toString()}`;
 }
 
 export function buildHosPlannerTelematicsBridgeUrl(vehicle: TelematicsVehicleSnapshot): string {
+  const base = getProductBaseUrl(5175, 'https://hosdispatch.pages.dev');
   const params = new URLSearchParams({
     source: 'product-05-telematics',
     driverId: vehicle.driverId,
@@ -37,10 +48,11 @@ export function buildHosPlannerTelematicsBridgeUrl(vehicle: TelematicsVehicleSna
     locationCity: vehicle.gps.nearestCity,
     locationState: vehicle.gps.state,
   });
-  return `http://localhost:5175/?${params.toString()}`;
+  return `${base}/?${params.toString()}`;
 }
 
 export function buildAssetStudioTelematicsBridgeUrl(vehicle: TelematicsVehicleSnapshot): string {
+  const base = getProductBaseUrl(5176, 'https://fleetstudio.pages.dev');
   // Map vehicle ID to Asset Studio catalog vehicle
   let assetId = 'dry-van-53';
   if (vehicle.coldChain.isEquipped) {
@@ -55,5 +67,5 @@ export function buildAssetStudioTelematicsBridgeUrl(vehicle: TelematicsVehicleSn
     telematicsUnit: vehicle.vehicleUnitNumber,
     healthScore: String(vehicle.overallHealthScore),
   });
-  return `http://localhost:5176/?${params.toString()}`;
+  return `${base}/?${params.toString()}`;
 }

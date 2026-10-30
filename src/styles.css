@@ -3,6 +3,7 @@
  */
 
 :root {
+  color-scheme: dark;
   --bg-primary: #070b14;
   --bg-secondary: #0d1527;
   --bg-card: #111c35;
@@ -31,16 +32,62 @@
   padding: 0;
 }
 
+:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  background: var(--accent-cyan);
+  color: #020617;
+  padding: 8px 16px;
+  font-weight: 700;
+  border-radius: 4px;
+  z-index: 99999;
+  text-decoration: none;
+  font-size: 13px;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 16px;
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+h1, h2, h3, h4 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 body {
   background-color: var(--bg-primary);
   color: var(--text-main);
   font-family: var(--font-sans);
   min-height: 100vh;
+  min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
 }
 
 .telematics-app-root {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
@@ -572,12 +619,52 @@ body {
   border-radius: 4px;
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 6px;
+  margin-bottom: 34px;
 }
 
 .corridor-progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #0284c7, #38bdf8);
   border-radius: 4px;
+}
+
+.waypoint-node {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.wp-pin {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #475569;
+  border: 1px solid #0f172a;
+}
+
+.waypoint-node.passed .wp-pin {
+  background: var(--accent-cyan);
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
+}
+
+.wp-label {
+  position: absolute;
+  top: 10px;
+  font-size: 9px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  white-space: nowrap;
+  transform: rotate(-35deg);
+  transform-origin: top left;
+}
+
+.waypoint-node.passed .wp-label {
+  color: #94a3b8;
 }
 
 .truck-pulse-marker {
@@ -631,4 +718,51 @@ body {
 .geo-status-highlight {
   color: var(--accent-emerald);
   font-weight: 700;
+}
+
+/* Reduced Motion Safety */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .truck-pulse-core {
+    animation: none !important;
+  }
+}
+
+/* Responsive Layout */
+@media (max-width: 900px) {
+  .bridge-nav-header {
+    padding: 10px 14px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .fleet-top-bar {
+    padding: 10px 14px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .unit-profile-banner {
+    margin: 12px 14px 0;
+    padding: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+  .telematics-content-wrap {
+    padding: 12px 14px 24px;
+  }
+  .telematics-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .unit-profile-banner {
+    grid-template-columns: 1fr;
+  }
+  .gauges-primary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

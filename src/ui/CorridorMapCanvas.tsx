@@ -1,4 +1,5 @@
 import React from 'react';
+import { IconMapPin, IconTruck } from './icons';
 import { GpsLocationTelemetry } from '../engine/types';
 import { CORRIDOR_I80 } from '../engine/corridors';
 
@@ -16,7 +17,7 @@ export const CorridorMapCanvas: React.FC<CorridorMapCanvasProps> = ({ gps }) => 
     <div className="telematics-card map-card">
       <div className="card-header">
         <div className="header-with-icon">
-          <h3>📍 GPS Corridor & Waypoint Geofencing Engine</h3>
+          <h3><span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><IconMapPin size={16} /> GPS Corridor & Waypoint Geofencing Engine</span></h3>
           <span className="corridor-title">{CORRIDOR_I80.name}</span>
         </div>
         <div className="location-pill">
@@ -64,7 +65,7 @@ export const CorridorMapCanvas: React.FC<CorridorMapCanvasProps> = ({ gps }) => 
             style={{ left: `${progressPct}%` }}
             title={`Current Position: Mile ${Math.round(currentMile)}`}
           >
-            <div className="truck-pulse-core">🚚</div>
+            <div className="truck-pulse-core"><IconTruck size={14} /></div>
           </div>
         </div>
       </div>

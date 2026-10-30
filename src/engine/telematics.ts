@@ -29,44 +29,52 @@ export function stepTelematicsSimulation(
   const next: TelematicsVehicleSnapshot = JSON.parse(JSON.stringify(vehicle));
   next.timestamp = new Date().toISOString();
 
+  let distanceMilesTraveled = 0;
+
   // If vehicle is idle or parked
   if (next.operationalStatus === 'idle') {
     next.engine.roadSpeedMph = 0;
     next.engine.engineRpm = 650 + Math.sin(Date.now() / 1000) * 20;
     next.engine.instantaneousMpg = 0;
+    next.engine.engineLoadPct = 18 + Math.round(Math.sin(Date.now() / 3000) * 2);
     next.safety.excessIdleMinutes += (deltaSeconds / 60);
     // Coolant stabilizes to ~180F
     next.engine.engineCoolantTempF = 180 + Math.sin(Date.now() / 5000) * 3;
-    return next;
+    next.engine.engineOilPressurePsi = 28 + Math.round(Math.sin(Date.now() / 4000) * 2);
+
+    // Idle fuel consumption: ~0.8 gal/hr on auxiliary idle
+    const idleFuelBurned = (0.8 / 3600) * deltaSeconds;
+    const idleFuelPctDrop = (idleFuelBurned / 200) * 100;
+    next.engine.fuelLevelPct = Math.max(0, next.engine.fuelLevelPct - idleFuelPctDrop);
+  } else {
+    // Active in-transit simulation
+    const speed = next.engine.roadSpeedMph;
+    distanceMilesTraveled = (speed * (deltaSeconds / 3600));
+    next.engine.odometerMiles += distanceMilesTraveled;
+
+    // Grade physics: uphill increases load and RPM, reduces speed slightly
+    const baseLoad = 55 + gradePct * 5;
+    next.engine.engineLoadPct = Math.min(100, Math.max(20, baseLoad + Math.sin(Date.now() / 2000) * 5));
+
+    // Fuel consumption: ~6.8 MPG average, varying with load and grade
+    const instantMpg = Math.max(3.5, 7.5 - (next.engine.engineLoadPct - 50) * 0.08);
+    next.engine.instantaneousMpg = Math.round(instantMpg * 10) / 10;
+
+    const fuelGallonsBurned = distanceMilesTraveled / instantMpg;
+    // Standard 200-gallon twin tank setup:
+    const fuelPctDrop = (fuelGallonsBurned / 200) * 100;
+    next.engine.fuelLevelPct = Math.max(0, next.engine.fuelLevelPct - fuelPctDrop);
+
+    // DEF consumption (~2% of diesel burn)
+    next.engine.defLevelPct = Math.max(0, next.engine.defLevelPct - fuelPctDrop * 0.4);
+
+    // Coolant temp dynamics (normal 190-205F, rises under high grade/load)
+    const targetCoolant = 192 + (next.engine.engineLoadPct > 70 ? (next.engine.engineLoadPct - 70) * 0.4 : 0);
+    next.engine.engineCoolantTempF = Math.round(targetCoolant + Math.sin(Date.now() / 3000) * 2);
+
+    // Oil pressure dynamics (40-55 PSI at highway RPM)
+    next.engine.engineOilPressurePsi = Math.round(42 + (next.engine.engineRpm / 1500) * 6);
   }
-
-  // Active in-transit simulation
-  const speed = next.engine.roadSpeedMph;
-  const distanceMilesTraveled = (speed * (deltaSeconds / 3600));
-  next.engine.odometerMiles += distanceMilesTraveled;
-
-  // Grade physics: uphill increases load and RPM, reduces speed slightly
-  const baseLoad = 55 + gradePct * 5;
-  next.engine.engineLoadPct = Math.min(100, Math.max(20, baseLoad + Math.sin(Date.now() / 2000) * 5));
-
-  // Fuel consumption: ~6.8 MPG average, varying with load and grade
-  const instantMpg = Math.max(3.5, 7.5 - (next.engine.engineLoadPct - 50) * 0.08);
-  next.engine.instantaneousMpg = Math.round(instantMpg * 10) / 10;
-
-  const fuelGallonsBurned = distanceMilesTraveled / instantMpg;
-  // Standard 200-gallon twin tank setup:
-  const fuelPctDrop = (fuelGallonsBurned / 200) * 100;
-  next.engine.fuelLevelPct = Math.max(0, next.engine.fuelLevelPct - fuelPctDrop);
-
-  // DEF consumption (~2% of diesel burn)
-  next.engine.defLevelPct = Math.max(0, next.engine.defLevelPct - fuelPctDrop * 0.4);
-
-  // Coolant temp dynamics (normal 190-205F, rises under high grade/load)
-  const targetCoolant = 192 + (next.engine.engineLoadPct > 70 ? (next.engine.engineLoadPct - 70) * 0.4 : 0);
-  next.engine.engineCoolantTempF = Math.round(targetCoolant + Math.sin(Date.now() / 3000) * 2);
-
-  // Oil pressure dynamics (40-55 PSI at highway RPM)
-  next.engine.engineOilPressurePsi = Math.round(42 + (next.engine.engineRpm / 1500) * 6);
 
   // Reefer Cold Chain Simulation
   if (next.coldChain.isEquipped) {
@@ -160,6 +168,27 @@ export function toggleReeferDoor(vehicle: TelematicsVehicleSnapshot): Telematics
   const next: TelematicsVehicleSnapshot = JSON.parse(JSON.stringify(vehicle));
   if (!next.coldChain.isEquipped) return next;
   next.coldChain.doorOpenState = !next.coldChain.doorOpenState;
+  return next;
+}
+
+/**
+ * Updates two-way remote IoT reefer setpoint and operating compressor mode.
+ */
+export function updateReeferSettings(
+  vehicle: TelematicsVehicleSnapshot,
+  settings: {
+    setPointF?: number;
+    compressorMode?: 'continuous' | 'start_stop' | 'defrost' | 'off';
+  }
+): TelematicsVehicleSnapshot {
+  const next: TelematicsVehicleSnapshot = JSON.parse(JSON.stringify(vehicle));
+  if (!next.coldChain.isEquipped) return next;
+  if (settings.setPointF !== undefined) {
+    next.coldChain.zone1SetPointF = settings.setPointF;
+  }
+  if (settings.compressorMode !== undefined) {
+    next.coldChain.compressorMode = settings.compressorMode;
+  }
   return next;
 }
 
