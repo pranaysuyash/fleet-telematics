@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "deploy": "wrangler pages deploy dist --project-name=fleet-telematics --branch=main"
+    "deploy": "wrangler pages deploy dist --project-name=fleettelematics --branch=main"
   },
   "dependencies": {
     "react": "^19.0.0",
