@@ -27,6 +27,8 @@ import { SuiteDock, isProductLicensed } from './SuiteDock';
 import { IconPause, IconPlay } from './icons';
 import { MovementTask } from './MovementTask';
 import { IftaReportModal } from './IftaReportModal';
+import { TpmsAndRemoteReeferModal } from './TpmsAndRemoteReeferModal';
+import { AiDashcamSafetyModal } from './AiDashcamSafetyModal';
 
 export function App() {
   const [fleet, setFleet] = useState<TelematicsVehicleSnapshot[]>(INITIAL_FLEET_VEHICLES);
@@ -34,6 +36,8 @@ export function App() {
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [simSpeed, setSimSpeed] = useState<number>(1); // 1x, 5x, 10x
   const [isIftaModalOpen, setIsIftaModalOpen] = useState<boolean>(false);
+  const [isTpmsModalOpen, setIsTpmsModalOpen] = useState<boolean>(false);
+  const [isDashcamModalOpen, setIsDashcamModalOpen] = useState<boolean>(false);
 
   // Inbound bridge parameter sync (portal or external bridge)
   useEffect(() => {
@@ -196,6 +200,46 @@ export function App() {
             >
               IFTA Return 📑
             </button>
+            <button
+              type="button"
+              onClick={() => setIsTpmsModalOpen(true)}
+              style={{
+                marginLeft: '6px',
+                padding: '5px 10px',
+                background: '#1e293b',
+                color: '#a78bfa',
+                border: '1px solid rgba(167, 139, 250, 0.4)',
+                borderRadius: '6px',
+                fontSize: '11px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              TPMS &amp; Reefer 🛞
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsDashcamModalOpen(true)}
+              style={{
+                marginLeft: '6px',
+                padding: '5px 10px',
+                background: '#1e293b',
+                color: '#38bdf8',
+                border: '1px solid rgba(56, 189, 248, 0.4)',
+                borderRadius: '6px',
+                fontSize: '11px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              AI Dashcam Safety 📹
+            </button>
           </div>
         </div>
 
@@ -341,6 +385,18 @@ export function App() {
         isOpen={isIftaModalOpen}
         onClose={() => setIsIftaModalOpen(false)}
         activeVehicle={activeVehicle}
+      />
+
+      <TpmsAndRemoteReeferModal
+        isOpen={isTpmsModalOpen}
+        onClose={() => setIsTpmsModalOpen(false)}
+        vehicleUnit={activeVehicle.vehicleUnitNumber}
+      />
+
+      <AiDashcamSafetyModal
+        isOpen={isDashcamModalOpen}
+        onClose={() => setIsDashcamModalOpen(false)}
+        driverName={activeVehicle.driverName}
       />
     </div>
   );
