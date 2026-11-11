@@ -5,6 +5,21 @@ import {
 } from '../src/engine/telematicsAdapter';
 
 describe('SAE J1939 Telematics Webhook & Sensor Ingestion Adapter', () => {
+  it('leaves missing readings and reefer health unknown', () => {
+    const snapshot = ingestTelematicsPayload({ vehicleId: 'TRK-1', timestamp: '2026-10-30T12:00:00Z', location: { latitude: 1, longitude: 2, speedMph: 20, odometerMiles: 100 } });
+    expect(snapshot.engineRpm).toBeNull();
+    expect(snapshot.coolantTempF).toBeNull();
+    expect(snapshot.reeferTempF).toBeNull();
+    expect(snapshot.isReeferExcursion).toBeNull();
+    expect(snapshot.highestAlertSeverity).toBe('UNKNOWN');
+  });
+  it('does not infer an excursion from a temperature without a declared setpoint', () => {
+    const snapshot = ingestTelematicsPayload({ vehicleId: 'TRK-1', timestamp: '2026-10-30T12:00:00Z', location: { latitude: 1, longitude: 2, speedMph: 20, odometerMiles: 100 }, j1939Signals: { spn1081_reeferTempF: 34 }, dtcList: [] });
+    expect(snapshot.reeferTempF).toBe(34);
+    expect(snapshot.reeferSetpointF).toBeNull();
+    expect(snapshot.isReeferExcursion).toBeNull();
+    expect(snapshot.highestAlertSeverity).toBe('UNKNOWN');
+  });
   it('correctly ingests nominal highway telematics payload without excursions', () => {
     const raw: ExternalTelematicsPayload = {
       vehicleId: 'TRK-104',
@@ -24,6 +39,7 @@ describe('SAE J1939 Telematics Webhook & Sensor Ingestion Adapter', () => {
         spn96_fuelLevelPct: 82,
         spn1081_reeferTempF: -10.2,
       },
+      dtcList: [],
     };
 
     const snapshot = ingestTelematicsPayload(raw, -10.0);
@@ -36,7 +52,7 @@ describe('SAE J1939 Telematics Webhook & Sensor Ingestion Adapter', () => {
     expect(snapshot.activeDtcAlerts.length).toBe(0);
   });
 
-  it('triggers thermal excursion alert when reefer delta exceeds statutory limit', () => {
+  it('flags a temperature difference beyond the scenario threshold', () => {
     const raw: ExternalTelematicsPayload = {
       vehicleId: 'TRK-104',
       timestamp: '2026-10-30T12:15:00Z',

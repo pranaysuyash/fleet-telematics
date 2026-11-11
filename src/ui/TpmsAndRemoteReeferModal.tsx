@@ -107,10 +107,10 @@ export const TpmsAndRemoteReeferModal: React.FC<TpmsAndRemoteReeferModalProps> =
         >
           <div>
             <h3 id="tpms-modal-title" style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#f8fafc' }}>
-              🛞 18-Wheel TPMS &amp; Bidirectional Remote Reefer Telematics
+              🛞 Simulated 18-Wheel TPMS &amp; Reefer Controls
             </h3>
             <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#94a3b8' }}>
-              Live wheel-end sensor telemetry &amp; remote commands for {vehicleUnit}.
+              Scenario readings and local controls for {vehicleUnit}. No sensor or remote controller is connected; this is not a legal inspection.
             </p>
           </div>
           <button
@@ -234,7 +234,7 @@ export const TpmsAndRemoteReeferModal: React.FC<TpmsAndRemoteReeferModalProps> =
 
           {/* Bidirectional Remote Reefer Console */}
           <h4 style={{ margin: '0 0 10px', fontSize: '0.9rem', color: '#38bdf8' }}>
-            ❄️ Bidirectional Remote Reefer Telematics Control (Cellular / Satcom Gateway):
+            ❄️ Simulated Reefer Controls (local only):
           </h4>
 
           <div
@@ -268,7 +268,7 @@ export const TpmsAndRemoteReeferModal: React.FC<TpmsAndRemoteReeferModalProps> =
               {/* Setpoint update */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.7rem', color: '#94a3b8', marginBottom: 4 }}>
-                  Remote Microprocessor Setpoint:
+                  Simulated Setpoint:
                 </label>
                 <div style={{ display: 'flex', gap: 6 }}>
                   <input
@@ -352,7 +352,7 @@ export const TpmsAndRemoteReeferModal: React.FC<TpmsAndRemoteReeferModalProps> =
           {commandLog.length > 0 && (
             <div>
               <h5 style={{ margin: '0 0 6px', fontSize: '0.75rem', color: '#94a3b8' }}>
-                Over-the-Air Command Audit Log:
+                Local Simulation Command Log:
               </h5>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                 {commandLog.slice(0, 3).map((cmd) => (

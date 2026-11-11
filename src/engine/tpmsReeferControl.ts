@@ -1,10 +1,10 @@
 /**
  * Commercial 18-Wheel End TPMS (Tire Pressure Monitoring System) &
- * Bidirectional Remote Reefer Telematics Control Engine
+ * Local Reefer Control Simulation
  *
  * Models individual wheel sensor metrics (PSI, °F, bearing overheat)
- * across steer, drive tandems, and trailer tandems, alongside remote command
- * execution for refrigeration units (Thermo King / Carrier Transicold).
+ * across steer, drive tandems, and trailer tandems, alongside local scenario
+ * commands. It does not connect to refrigeration units.
  */
 
 export type AxlePosition = 'steer' | 'drive_front' | 'drive_rear' | 'trailer_front' | 'trailer_rear';
@@ -26,7 +26,7 @@ export interface ReeferCommand {
   commandType: 'SET_SETPOINT' | 'TRIGGER_DEFROST' | 'SET_RUN_MODE';
   parameterValue: string | number;
   dispatchedAt: string;
-  status: 'PENDING' | 'ACKNOWLEDGED' | 'FAILED';
+  status: 'PENDING' | 'ACKNOWLEDGED' | 'FAILED' | 'SIMULATED';
   responseMessage: string;
 }
 
@@ -121,12 +121,13 @@ export interface TpmsAuditSummary {
   criticalDeflationsCount: number;
   lowPressureCount: number;
   overheatingBearingsCount: number;
-  allTiresLegal: boolean;
+  /** This heuristic does not determine legal compliance. */
+  allTiresLegal: null;
   severeAlerts: string[];
 }
 
 /**
- * Audits 18-wheel TPMS status against CVSA Out-of-Service inspection criteria.
+ * Summarizes simulated wheel status; this is not a legal inspection.
  */
 export function auditTpmsSafety(wheels: WheelPosition[]): TpmsAuditSummary {
   const severeAlerts: string[] = [];
@@ -151,13 +152,13 @@ export function auditTpmsSafety(wheels: WheelPosition[]): TpmsAuditSummary {
     criticalDeflationsCount,
     lowPressureCount,
     overheatingBearingsCount,
-    allTiresLegal: criticalDeflationsCount === 0 && overheatingBearingsCount === 0,
+    allTiresLegal: null,
     severeAlerts,
   };
 }
 
 /**
- * Dispatches a bidirectional remote telematics command to the Carrier/ThermoKing controller.
+ * Applies a command to the local simulation only; no controller is contacted.
  */
 export function executeRemoteReeferCommand(
   currentState: ReeferUnitState,
@@ -168,19 +169,19 @@ export function executeRemoteReeferCommand(
   const timestamp = new Date().toISOString();
 
   const nextState: ReeferUnitState = { ...currentState };
-  let responseMessage = 'Command executed successfully by remote telematics gateway.';
+  let responseMessage = 'Applied in the local simulation; no remote controller contacted.';
 
   if (commandType === 'SET_SETPOINT') {
     const newTemp = Number(parameterValue);
     nextState.setpointTempF = newTemp;
-    responseMessage = `Microprocessor setpoint successfully updated to ${newTemp.toFixed(1)}°F. Compressor adjusting modulation.`;
+    responseMessage = `Simulation setpoint updated to ${newTemp.toFixed(1)}°F; no remote controller contacted.`;
   } else if (commandType === 'TRIGGER_DEFROST') {
     nextState.powerState = 'DEFROST';
-    responseMessage = 'Hot gas reverse defrost initiated. Evaporator coil heaters engaged for 20-minute cycle.';
+    responseMessage = 'Simulation defrost state selected; no remote controller contacted.';
   } else if (commandType === 'SET_RUN_MODE') {
     const mode = parameterValue as 'CONTINUOUS' | 'CYCLE_SENTRY';
     nextState.runMode = mode;
-    responseMessage = `Engine cycle mode switched to ${mode}. Auto start-stop parameters updated.`;
+    responseMessage = `Simulation run mode set to ${mode}; no remote controller contacted.`;
   }
 
   const command: ReeferCommand = {
@@ -188,7 +189,7 @@ export function executeRemoteReeferCommand(
     commandType,
     parameterValue,
     dispatchedAt: timestamp,
-    status: 'ACKNOWLEDGED',
+    status: 'SIMULATED',
     responseMessage,
   };
 

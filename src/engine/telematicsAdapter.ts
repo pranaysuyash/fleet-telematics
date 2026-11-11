@@ -39,15 +39,15 @@ export interface IngestedTelemetrySnapshot {
   longitude: number;
   speedMph: number;
   odometerMiles: number;
-  engineRpm: number;
-  coolantTempF: number;
-  fuelRateGph: number;
-  fuelLevelPct: number;
-  reeferTempF: number;
-  isReeferExcursion: boolean;
-  reeferSetpointF: number;
+  engineRpm: number | null;
+  coolantTempF: number | null;
+  fuelRateGph: number | null;
+  fuelLevelPct: number | null;
+  reeferTempF: number | null;
+  isReeferExcursion: boolean | null;
+  reeferSetpointF: number | null;
   activeDtcAlerts: string[];
-  highestAlertSeverity: 'NORMAL' | 'WARNING' | 'CRITICAL';
+  highestAlertSeverity: 'UNKNOWN' | 'NORMAL' | 'WARNING' | 'CRITICAL';
 }
 
 /**
@@ -61,21 +61,23 @@ export const EXCURSION_THRESHOLD_DELTA_F = 3.0; // +/- 3 degrees delta triggers 
  */
 export function ingestTelematicsPayload(
   raw: ExternalTelematicsPayload,
-  reeferSetpointF = DEFAULT_REEFER_SETPOINT_F
+  reeferSetpointF?: number
 ): IngestedTelemetrySnapshot {
   const speed = raw.j1939Signals?.spn84_wheelSpeedMph ?? raw.location.speedMph ?? 0;
-  const rpm = raw.j1939Signals?.spn190_engineRpm ?? 0;
-  const coolant = raw.j1939Signals?.spn110_coolantTempF ?? 185.0;
-  const fuelRate = raw.j1939Signals?.spn183_fuelRateGph ?? 7.2;
-  const fuelLevel = raw.j1939Signals?.spn96_fuelLevelPct ?? 85.0;
-  const reeferTemp = raw.j1939Signals?.spn1081_reeferTempF ?? -9.8;
+  const present = (value: number | undefined) => typeof value === 'number' && Number.isFinite(value) ? value : null;
+  const rpm = present(raw.j1939Signals?.spn190_engineRpm);
+  const coolant = present(raw.j1939Signals?.spn110_coolantTempF);
+  const fuelRate = present(raw.j1939Signals?.spn183_fuelRateGph);
+  const fuelLevel = present(raw.j1939Signals?.spn96_fuelLevelPct);
+  const reeferTemp = present(raw.j1939Signals?.spn1081_reeferTempF);
 
   // Evaluate thermal excursion
-  const isReeferExcursion = Math.abs(reeferTemp - reeferSetpointF) > EXCURSION_THRESHOLD_DELTA_F;
+  const declaredSetpoint = present(reeferSetpointF);
+  const isReeferExcursion = reeferTemp === null || declaredSetpoint === null ? null : Math.abs(reeferTemp - declaredSetpoint) > EXCURSION_THRESHOLD_DELTA_F;
 
   // Process DTC trouble codes
   const activeDtcAlerts: string[] = [];
-  let highestAlertSeverity: IngestedTelemetrySnapshot['highestAlertSeverity'] = 'NORMAL';
+  let highestAlertSeverity: IngestedTelemetrySnapshot['highestAlertSeverity'] = raw.dtcList && isReeferExcursion !== null ? 'NORMAL' : 'UNKNOWN';
 
   if (raw.dtcList && raw.dtcList.length > 0) {
     for (const dtc of raw.dtcList) {
@@ -101,13 +103,13 @@ export function ingestTelematicsPayload(
     longitude: raw.location.longitude,
     speedMph: Math.round(speed * 10) / 10,
     odometerMiles: raw.location.odometerMiles,
-    engineRpm: Math.round(rpm),
-    coolantTempF: Math.round(coolant * 10) / 10,
-    fuelRateGph: Math.round(fuelRate * 10) / 10,
-    fuelLevelPct: Math.round(fuelLevel),
-    reeferTempF: Math.round(reeferTemp * 10) / 10,
+    engineRpm: rpm === null ? null : Math.round(rpm),
+    coolantTempF: coolant === null ? null : Math.round(coolant * 10) / 10,
+    fuelRateGph: fuelRate === null ? null : Math.round(fuelRate * 10) / 10,
+    fuelLevelPct: fuelLevel === null ? null : Math.round(fuelLevel),
+    reeferTempF: reeferTemp === null ? null : Math.round(reeferTemp * 10) / 10,
     isReeferExcursion,
-    reeferSetpointF,
+    reeferSetpointF: declaredSetpoint,
     activeDtcAlerts,
     highestAlertSeverity,
   };
