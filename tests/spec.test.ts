@@ -38,7 +38,6 @@ describe('Product 05 — Telematics & J1939 Engine Architecture', () => {
     const initialFuel = unit104.engine.fuelLevelPct;
     const initialMileMarker = unit104.gps.mileMarker;
 
-    // Step 60 seconds of driving at ~66.8 mph
     const stepped = stepTelematicsSimulation(unit104, { deltaSeconds: 60, gradePct: 0 });
 
     expect(stepped.engine.odometerMiles).toBeGreaterThan(initialOdo);

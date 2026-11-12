@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { IconCompass, IconX, IconAlertTriangle, IconThermometer, IconSnowflake, IconRotateCw, IconZap } from './icons';
 import {
   generateBaseline18WheelTpms,
   auditTpmsSafety,
@@ -106,8 +107,9 @@ export const TpmsAndRemoteReeferModal: React.FC<TpmsAndRemoteReeferModalProps> =
           }}
         >
           <div>
-            <h3 id="tpms-modal-title" style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#f8fafc' }}>
-              🛞 Simulated 18-Wheel TPMS &amp; Reefer Controls
+            <h3 id="tpms-modal-title" style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <IconCompass size={18} style={{ color: '#2dd4bf' }} />
+              Simulated 18-Wheel TPMS &amp; Reefer Controls
             </h3>
             <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#94a3b8' }}>
               Scenario readings and local controls for {vehicleUnit}. No sensor or remote controller is connected; this is not a legal inspection.
@@ -125,7 +127,7 @@ export const TpmsAndRemoteReeferModal: React.FC<TpmsAndRemoteReeferModalProps> =
             }}
             aria-label="Close"
           >
-            ✕
+            <IconX size={18} />
           </button>
         </div>
 
@@ -165,9 +167,13 @@ export const TpmsAndRemoteReeferModal: React.FC<TpmsAndRemoteReeferModalProps> =
                     background: 'rgba(239, 68, 68, 0.2)',
                     borderLeft: '4px solid #ef4444',
                     color: '#fca5a5',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
                   }}
                 >
-                  <strong>⚠️ Critical Wheel Exception:</strong> {alt}
+                  <IconAlertTriangle size={14} style={{ flexShrink: 0 }} />
+                  <span><strong>Critical Wheel Exception:</strong> {alt}</span>
                 </div>
               ))}
             </div>
@@ -187,12 +193,12 @@ export const TpmsAndRemoteReeferModal: React.FC<TpmsAndRemoteReeferModalProps> =
                     background: isCrit
                       ? 'rgba(239, 68, 68, 0.2)'
                       : isHeat
-                      ? 'rgba(168, 85, 247, 0.2)'
+                      ? 'rgba(249, 115, 22, 0.2)'
                       : isLow
                       ? 'rgba(245, 158, 11, 0.2)'
                       : '#1e293b',
                     border: `1px solid ${
-                      isCrit ? '#ef4444' : isHeat ? '#a855f7' : isLow ? '#f59e0b' : '#334155'
+                      isCrit ? '#ef4444' : isHeat ? '#f97316' : isLow ? '#f59e0b' : '#334155'
                     }`,
                     borderRadius: 6,
                     padding: '8px',
@@ -205,8 +211,8 @@ export const TpmsAndRemoteReeferModal: React.FC<TpmsAndRemoteReeferModalProps> =
                   <div style={{ fontSize: '1.05rem', fontWeight: 700, margin: '2px 0', color: isCrit ? '#f87171' : isLow ? '#fbbf24' : '#38bdf8' }}>
                     {w.actualPsi} <span style={{ fontSize: '0.65rem' }}>PSI</span>
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: isHeat ? '#d8b4fe' : '#cbd5e1' }}>
-                    {w.actualTempF}°F {isHeat && '🔥'}
+                  <div style={{ fontSize: '0.7rem', color: isHeat ? '#fb923c' : '#cbd5e1', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                    {w.actualTempF}°F {isHeat && <IconThermometer size={11} />}
                   </div>
 
                   <div style={{ marginTop: 6, display: 'flex', gap: 4, justifyContent: 'center' }}>
@@ -222,7 +228,7 @@ export const TpmsAndRemoteReeferModal: React.FC<TpmsAndRemoteReeferModalProps> =
                       type="button"
                       title="Simulate Bearing Overheat"
                       onClick={() => handleSimulateOverheat(w.id)}
-                      style={{ fontSize: '0.65rem', background: '#334155', border: 'none', borderRadius: 2, padding: '2px 4px', cursor: 'pointer', color: '#d8b4fe' }}
+                      style={{ fontSize: '0.65rem', background: '#334155', border: 'none', borderRadius: 2, padding: '2px 4px', cursor: 'pointer', color: '#fb923c' }}
                     >
                       Heat
                     </button>
@@ -233,8 +239,8 @@ export const TpmsAndRemoteReeferModal: React.FC<TpmsAndRemoteReeferModalProps> =
           </div>
 
           {/* Bidirectional Remote Reefer Console */}
-          <h4 style={{ margin: '0 0 10px', fontSize: '0.9rem', color: '#38bdf8' }}>
-            ❄️ Simulated Reefer Controls (local only):
+          <h4 style={{ margin: '0 0 10px', fontSize: '0.9rem', color: '#38bdf8', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <IconSnowflake size={15} /> Simulated Reefer Controls (local only):
           </h4>
 
           <div
@@ -315,9 +321,14 @@ export const TpmsAndRemoteReeferModal: React.FC<TpmsAndRemoteReeferModalProps> =
                     fontSize: '0.75rem',
                     fontWeight: 600,
                     cursor: reeferState.powerState === 'DEFROST' ? 'not-allowed' : 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
                   }}
                 >
-                  {reeferState.powerState === 'DEFROST' ? 'Defrost Active ♨️' : 'Trigger Defrost Cycle ♨️'}
+                  <IconThermometer size={13} />
+                  {reeferState.powerState === 'DEFROST' ? 'Defrost Active' : 'Trigger Defrost Cycle'}
                 </button>
               </div>
 
@@ -340,9 +351,13 @@ export const TpmsAndRemoteReeferModal: React.FC<TpmsAndRemoteReeferModalProps> =
                     fontSize: '0.75rem',
                     fontWeight: 600,
                     cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
                   }}
                 >
-                  Mode: {reeferState.runMode === 'CONTINUOUS' ? 'Continuous 🔄' : 'Start-Stop ⚡'}
+                  {reeferState.runMode === 'CONTINUOUS' ? <><IconRotateCw size={13} /> Mode: Continuous</> : <><IconZap size={13} /> Mode: Start-Stop</>}
                 </button>
               </div>
             </div>

@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { IconX, IconShieldAlert } from './icons';
 import {
   aggregateCorridorJurisdictionMiles,
   generateIftaQuarterlyReturn,
@@ -152,7 +153,7 @@ export const IftaReportModal: React.FC<IftaReportModalProps> = ({
               justifyContent: 'center',
             }}
           >
-            ✕
+            <IconX size={18} />
           </button>
         </div>
 
@@ -258,9 +259,13 @@ export const IftaReportModal: React.FC<IftaReportModalProps> = ({
               fontSize: 11,
               color: '#94a3b8',
               lineHeight: 1.5,
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 8,
             }}
           >
-            🛡️ <b>Statutory Compliance Note:</b> {iftaReport.statutoryCertification} Fleet distances are derived from continuous SAE J1939 odometer broadcasts and geofenced state-line waypoint crossings.
+            <IconShieldAlert size={15} style={{ flexShrink: 0, marginTop: 2, color: '#38bdf8' }} />
+            <span><b>Statutory Compliance Note:</b> {iftaReport.statutoryCertification} Fleet distances are derived from continuous SAE J1939 odometer broadcasts and geofenced state-line waypoint crossings.</span>
           </div>
         </div>
 

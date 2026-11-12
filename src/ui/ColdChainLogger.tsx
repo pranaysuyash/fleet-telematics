@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IconSnowflake } from './icons';
+import { IconSnowflake, IconCheck } from './icons';
 import { ColdChainTelemetry } from '../engine/types';
 
 interface ColdChainLoggerProps {
@@ -224,8 +224,9 @@ export const ColdChainLogger: React.FC<ColdChainLoggerProps> = ({
                   fontSize: 11,
                   padding: '2px 7px',
                   borderRadius: 4,
-                  border: '1px solid #cbd5e1',
-                  background: '#ffffff',
+                  border: '1px solid #334155',
+                  background: '#1e293b',
+                  color: '#e2e8f0',
                   cursor: 'pointer',
                   fontWeight: 700,
                 }}
@@ -239,8 +240,9 @@ export const ColdChainLogger: React.FC<ColdChainLoggerProps> = ({
                   fontSize: 11,
                   padding: '2px 7px',
                   borderRadius: 4,
-                  border: '1px solid #cbd5e1',
-                  background: '#ffffff',
+                  border: '1px solid #334155',
+                  background: '#1e293b',
+                  color: '#e2e8f0',
                   cursor: 'pointer',
                   fontWeight: 700,
                 }}
@@ -251,8 +253,8 @@ export const ColdChainLogger: React.FC<ColdChainLoggerProps> = ({
           </div>
 
           {commandFeedback && (
-            <div style={{ fontSize: 11, color: '#0369a1', fontStyle: 'italic' }}>
-              ✓ {commandFeedback}
+            <div style={{ fontSize: 11, color: '#38bdf8', fontStyle: 'italic', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <IconCheck size={12} /> {commandFeedback}
             </div>
           )}
         </div>

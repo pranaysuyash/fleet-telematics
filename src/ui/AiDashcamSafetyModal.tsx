@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { IconCamera, IconX, IconCheck } from './icons';
 import {
   SAMPLE_SAFETY_EVENTS,
   calculateDriverSafetyScore,
@@ -94,9 +95,10 @@ export const AiDashcamSafetyModal: React.FC<AiDashcamSafetyModalProps> = ({
           <div>
             <h3
               id="ai-dashcam-title"
-              style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#38bdf8' }}
+              style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '8px' }}
             >
-              📹 AI Dashcam Computer Vision Safety Telemetry
+              <IconCamera size={17} />
+              AI Dashcam Computer Vision Safety Telemetry
             </h3>
             <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#94a3b8' }}>
               Driver: {driverName} · In-Cab DMS &amp; Road-Facing ADAS Vision Stream
@@ -114,7 +116,7 @@ export const AiDashcamSafetyModal: React.FC<AiDashcamSafetyModalProps> = ({
               padding: '4px 8px',
             }}
           >
-            ✕
+            <IconX size={18} />
           </button>
         </div>
 
@@ -306,9 +308,12 @@ export const AiDashcamSafetyModal: React.FC<AiDashcamSafetyModalProps> = ({
                         fontSize: '10px',
                         fontWeight: 600,
                         cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
                       }}
                     >
-                      Sign Off Coaching ✓
+                      <IconCheck size={11} /> Sign Off Coaching
                     </button>
                   )}
                 </div>

@@ -24,7 +24,7 @@ import { ColdChainLogger } from './ColdChainLogger';
 import { CorridorMapCanvas } from './CorridorMapCanvas';
 import { DtcAlertPanel } from './DtcAlertPanel';
 import { SuiteDock, isProductLicensed } from './SuiteDock';
-import { IconPause, IconPlay } from './icons';
+import { IconPause, IconPlay, IconFileText, IconCompass, IconCamera } from './icons';
 import { MovementTask } from './MovementTask';
 import { IftaReportModal } from './IftaReportModal';
 import { TpmsAndRemoteReeferModal } from './TpmsAndRemoteReeferModal';
@@ -198,7 +198,8 @@ export function App() {
                 gap: '4px',
               }}
             >
-              IFTA Return 📑
+              <IconFileText size={13} />
+              IFTA Return
             </button>
             <button
               type="button"
@@ -207,8 +208,8 @@ export function App() {
                 marginLeft: '6px',
                 padding: '5px 10px',
                 background: '#1e293b',
-                color: '#a78bfa',
-                border: '1px solid rgba(167, 139, 250, 0.4)',
+                color: '#2dd4bf',
+                border: '1px solid rgba(45, 212, 191, 0.4)',
                 borderRadius: '6px',
                 fontSize: '11px',
                 fontWeight: 600,
@@ -218,7 +219,8 @@ export function App() {
                 gap: '4px',
               }}
             >
-              TPMS &amp; Reefer 🛞
+              <IconCompass size={13} />
+              TPMS &amp; Reefer
             </button>
             <button
               type="button"
@@ -238,7 +240,8 @@ export function App() {
                 gap: '4px',
               }}
             >
-              AI Dashcam Safety 📹
+              <IconCamera size={13} />
+              AI Dashcam Safety
             </button>
           </div>
         </div>

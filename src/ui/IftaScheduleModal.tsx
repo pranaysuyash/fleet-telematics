@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { IconX } from './icons';
 import {
   aggregateCorridorJurisdictionMiles,
   generateIftaQuarterlyReturn,
@@ -142,7 +143,7 @@ export const IftaScheduleModal: React.FC<IftaScheduleModalProps> = ({
               justifyContent: 'center',
             }}
           >
-            ✕
+            <IconX size={18} />
           </button>
         </div>
 
